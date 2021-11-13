@@ -21,6 +21,7 @@ async function run(){
     const trendyProductCollection= database.collection('trendyProducts');
     const orderCollection= database.collection('orders');
     const reviewCollection = database.collection('review')
+    const userCollection = database.collection('users')
 
 
     // Api for all products
@@ -77,6 +78,22 @@ async function run(){
       const id = req.params.id;
       const query = {_id: ObjectId(id)};
       const result = await orderCollection.deleteOne(query);
+      res.json(result);
+    })
+
+    // post user
+    app.post('/users', async (req,res)=>{
+      const user = req.body;
+      const result = await userCollection.insertOne(user)
+      res.json(result);
+   })
+    app.put('/users', async (req,res)=>{
+      const user = req.body; 
+      console.log(user);
+      const filter = {email: user.email};
+      const options = {upset:true};
+      const updateDoc = {$set:user};
+      const result = await userCollection.updateOne(filter,updateDoc,options);
       res.json(result);
     })
   }
