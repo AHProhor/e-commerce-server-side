@@ -20,6 +20,7 @@ async function run(){
     const productCollection= database.collection('products');
     const trendyProductCollection= database.collection('trendyProducts');
     const orderCollection= database.collection('orders');
+    const reviewCollection = database.collection('review')
 
 
     // Api for all products
@@ -35,6 +36,13 @@ async function run(){
       res.send(trendyProducts);
     })
 
+    // get review
+    app.get('/review',async(req,res) =>{
+      const cursor = reviewCollection.find({});
+      const result = await cursor.toArray();
+      res.send(result);
+    })
+
     // get single products
     app.get('/products/:id', async(req,res)=>{
       const id= req.params.id;
@@ -46,9 +54,30 @@ async function run(){
     // Post orders
     app.post('/orders', async(req,res)=>{
       const order = req.body;
-      console.log(order)
       const result = await orderCollection.insertOne(order);
       res.json(result)
+    })
+
+    //  post review
+    app.post('/review', async (req,res)=>{
+       const review = req.body;
+       const result = await reviewCollection.insertOne(review)
+       res.json(result)
+    })
+    //  get Order
+    app.get('/orders', async(req,res)=>{
+      const email = req.query.email;
+      const query = {email: email}
+      const cursor = orderCollection.find(query);
+      const orders = await cursor.toArray();
+      res.json(orders);
+    })
+    // Delete order
+    app.delete('/orders/:id', async(req,res)=>{
+      const id = req.params.id;
+      const query = {_id: ObjectId(id)};
+      const result = await orderCollection.deleteOne(query);
+      res.json(result);
     })
   }
     
